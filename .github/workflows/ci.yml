@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        java: [17]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build
+        run: ./gradlew build
+
+      - name: Build Shadow JAR
+        run: ./gradlew :genesis-cli:shadowJar
+
+      - name: Run genesis new command
+        run: java -jar genesis-cli/build/libs/genesis.jar new ci-test-site
+
+      - name: Run genesis build command
+        run: java -jar genesis-cli/build/libs/genesis.jar build --dir ci-test-site
+
+      - name: Run genesis check command
+        run: java -jar genesis-cli/build/libs/genesis.jar check --dir ci-test-site
+
+      - name: Build documentation site (dogfooding)
+        run: java -jar genesis-cli/build/libs/genesis.jar build --dir genesis-docs/site
+
+      - name: Upload test reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-${{ matrix.os }}
+          path: '**/build/reports/tests/'
