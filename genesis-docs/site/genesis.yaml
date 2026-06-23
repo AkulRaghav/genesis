@@ -1,0 +1,9 @@
+title: "Genesis Documentation"
+baseUrl: "https://genesis-ssg.dev"
+description: "Documentation for Genesis, the modern static site generator for the JVM"
+language: "en"
+prettyUrls: true
+
+build:
+  parallel: true
+  minify: false

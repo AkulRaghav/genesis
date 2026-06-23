@@ -1,0 +1,4 @@
+{% extends "base.peb" %}
+{% block content %}
+<div>{{ content | raw }}</div>
+{% endblock %}
