@@ -20,5 +20,12 @@ dist/
 out/
 genesis-docs/site/dist/
 
+# Generated demo sites
+my-website/
+island-demo/
+
+# Landing page (separate Next.js project)
+genesis-landing/
+
 # Runtime
 *.log

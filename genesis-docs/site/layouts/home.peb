@@ -1,4 +1,220 @@
 {% extends "base.peb" %}
 {% block content %}
-<div>{{ content | raw }}</div>
+<div class="hero">
+    <div class="hero-badge">Static Site Generator for the JVM</div>
+    <h1 class="hero-title">Build blazing-fast websites<br>with <span class="gradient-text">Kotlin</span></h1>
+    <p class="hero-desc">Hugo's speed. Astro's islands. Eleventy's flexibility.<br>No Node.js. No Go. Just the JVM you already know.</p>
+    <div class="hero-actions">
+        <a href="/docs/quick-start/" class="btn btn-primary">Get Started</a>
+        <a href="https://github.com/AkulRaghav/genesis" class="btn btn-secondary">View on GitHub</a>
+    </div>
+</div>
+
+<div class="features-grid">
+    <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Fast Builds</h3>
+        <p>1,000 pages in 2s. Incremental rebuilds in 75ms. Parallel rendering across all CPU cores.</p>
+    </div>
+    <div class="feature-card">
+        <div class="feature-icon">🏝️</div>
+        <h3>Islands Architecture</h3>
+        <p>Ship zero JavaScript by default. Hydrate only interactive components with load, idle, or visible strategies.</p>
+    </div>
+    <div class="feature-card">
+        <div class="feature-icon">🔌</div>
+        <h3>Plugin System</h3>
+        <p>5 built-in plugins. Extend with custom transformers, shortcodes, asset processors, and lifecycle hooks.</p>
+    </div>
+    <div class="feature-card">
+        <div class="feature-icon">📝</div>
+        <h3>Markdown + Extensions</h3>
+        <p>Footnotes, callouts, auto-anchors, TOC extraction. GitHub Flavored Markdown with superpowers.</p>
+    </div>
+    <div class="feature-card">
+        <div class="feature-icon">🎨</div>
+        <h3>Dual Templates</h3>
+        <p>Type-safe Kotlin DSL for power users. Jinja2-like Pebble templates for content authors. Mix and match.</p>
+    </div>
+    <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>SEO Built-in</h3>
+        <p>Auto-generated sitemap, RSS/Atom feeds, robots.txt, OG images, and taxonomy pages with pagination.</p>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Quick Start</h2>
+    <pre><code>$ genesis new my-blog
+$ cd my-blog
+$ genesis serve        # → http://localhost:8080 with live reload
+$ genesis build        # → dist/ ready to deploy anywhere</code></pre>
+</div>
+
+<div class="section">
+    <h2>Documentation</h2>
+    <div class="doc-links">
+        <a href="/docs/installation/" class="doc-link">
+            <span class="doc-link-title">Installation</span>
+            <span class="doc-link-desc">Get Genesis running on your machine</span>
+        </a>
+        <a href="/docs/quick-start/" class="doc-link">
+            <span class="doc-link-title">Quick Start</span>
+            <span class="doc-link-desc">Create your first site in 60 seconds</span>
+        </a>
+        <a href="/docs/content/" class="doc-link">
+            <span class="doc-link-title">Content Authoring</span>
+            <span class="doc-link-desc">Markdown, frontmatter, and extensions</span>
+        </a>
+        <a href="/docs/templates/" class="doc-link">
+            <span class="doc-link-title">Templating</span>
+            <span class="doc-link-desc">Kotlin DSL and Pebble templates</span>
+        </a>
+        <a href="/docs/plugins/" class="doc-link">
+            <span class="doc-link-title">Plugin System</span>
+            <span class="doc-link-desc">Extend Genesis with custom plugins</span>
+        </a>
+        <a href="/docs/configuration/" class="doc-link">
+            <span class="doc-link-title">Configuration</span>
+            <span class="doc-link-desc">Full genesis.yaml reference</span>
+        </a>
+    </div>
+</div>
+
+<style>
+    .hero {
+        text-align: center;
+        padding: 4rem 0 5rem;
+    }
+    .hero-badge {
+        display: inline-block;
+        padding: 0.4rem 1rem;
+        background: var(--accent-glow);
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        border-radius: 9999px;
+        font-size: 0.85rem;
+        color: var(--accent-light);
+        font-weight: 500;
+        margin-bottom: 1.5rem;
+    }
+    .hero-title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(135deg, #fff 0%, #a1a1aa 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .gradient-text {
+        background: linear-gradient(135deg, var(--accent-light), #a855f7);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .hero-desc {
+        font-size: 1.2rem;
+        color: var(--text-muted);
+        max-width: 600px;
+        margin: 0 auto 2rem;
+        line-height: 1.6;
+    }
+    .hero-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    .btn-primary {
+        background: var(--accent);
+        color: white;
+        box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+    }
+    .btn-primary:hover {
+        background: var(--accent-light);
+        box-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
+        text-decoration: none;
+        color: white;
+    }
+    .btn-secondary {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        color: var(--text);
+    }
+    .btn-secondary:hover {
+        background: var(--bg-card-hover);
+        border-color: var(--border-light);
+        text-decoration: none;
+        color: var(--text);
+    }
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.25rem;
+        margin: 3rem 0;
+    }
+    .feature-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1.75rem;
+        transition: all 0.2s;
+    }
+    .feature-card:hover {
+        border-color: var(--border-light);
+        background: var(--bg-card-hover);
+        transform: translateY(-2px);
+    }
+    .feature-icon { font-size: 1.75rem; margin-bottom: 0.75rem; }
+    .feature-card h3 { margin-top: 0; font-size: 1.1rem; margin-bottom: 0.5rem; }
+    .feature-card p { font-size: 0.9rem; margin-bottom: 0; color: var(--text-dim); }
+    .section { margin-top: 4rem; }
+    .section h2 { margin-top: 0; margin-bottom: 1.5rem; }
+    .doc-links {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1rem;
+    }
+    .doc-link {
+        display: block;
+        padding: 1.25rem 1.5rem;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    .doc-link:hover {
+        border-color: var(--accent);
+        background: var(--bg-card-hover);
+        text-decoration: none;
+    }
+    .doc-link-title {
+        display: block;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 0.25rem;
+    }
+    .doc-link-desc {
+        display: block;
+        font-size: 0.85rem;
+        color: var(--text-dim);
+    }
+    @media (max-width: 768px) {
+        .hero-title { font-size: 2.25rem; }
+        .hero-desc { font-size: 1rem; }
+    }
+</style>
 {% endblock %}

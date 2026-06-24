@@ -62,6 +62,7 @@ class NewCommand : CliktCommand(name = "new") {
             "static",
             "static/css",
             "static/js",
+            "static/islands",
             "data",
         ).forEach { dir ->
             root.resolve(dir).createDirectories()
@@ -216,6 +217,80 @@ Genesis combines:
 - Hugo's speed and single-binary simplicity
 - Astro's islands architecture
 - Eleventy's template flexibility
+""".trimIndent())
+
+        // Island demo page
+        root.resolve("content/blog/islands-demo.md").writeText("""
+---
+title: "Islands Architecture Demo"
+date: "2024-02-01"
+description: "Interactive components with zero JS for static content"
+tags: ["genesis", "islands"]
+categories: ["tutorial"]
+---
+
+# Islands Architecture Demo
+
+This page demonstrates Genesis's islands architecture. Everything you're reading is **static HTML with zero JavaScript**. Only the interactive components below load JS — and each one loads independently.
+
+## Counter (hydration: load)
+
+This counter hydrates immediately when the page loads:
+
+<island src="/islands/counter.js" hydrate="load" props='{"initialCount":5}'>
+<span style="color:#6b7280;">Loading counter...</span>
+</island>
+
+## Theme Switcher (hydration: idle)
+
+This toggle hydrates only when the browser is idle (after critical rendering):
+
+<island src="/islands/theme-switcher.js" hydrate="idle">
+<span style="color:#6b7280;">Loading theme switcher...</span>
+</island>
+
+## Comment Form (hydration: visible)
+
+This form hydrates only when you scroll it into view. Check your Network tab — the JS loads on scroll:
+
+<island src="/islands/comment-form.js" hydrate="visible" props='{"postId":"islands-demo"}'>
+<span style="color:#6b7280;">Scroll here to load comments...</span>
+</island>
+
+## Newsletter Signup (hydration: client:only)
+
+This form is **never server-rendered**. View the page source — you'll see an empty div. The form only appears after JS hydration:
+
+<island src="/islands/newsletter.js" hydrate="client:only">
+</island>
+
+---
+
+## How It Works
+
+Each `<island>` tag becomes a hydration container. The Genesis loader script (~500 bytes) watches each island and loads its JS bundle at the right time:
+
+- **load** — immediately via `<script type="module">`
+- **idle** — via `requestIdleCallback()`
+- **visible** — via `IntersectionObserver`
+- **client:only** — same as load, but with no SSR fallback content
+""".trimIndent())
+
+        // Copy island JS components
+        root.resolve("static/islands/counter.js").writeText("""
+(function(){var i=document.querySelector('[data-src="/islands/counter.js"]');if(!i)return;var p=i.dataset.props?JSON.parse(i.dataset.props):{};var c=p.initialCount||0;function r(){i.innerHTML='<div style="display:inline-flex;align-items:center;gap:0.75rem;padding:0.75rem 1.25rem;background:#1e293b;border-radius:12px;border:1px solid #334155;"><button id="cd" style="width:32px;height:32px;border-radius:8px;border:1px solid #475569;background:#0f172a;color:#e2e8f0;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">\u2212</button><span style="font-size:1.5rem;font-weight:700;color:#f8fafc;min-width:3ch;text-align:center;">'+c+'</span><button id="ci" style="width:32px;height:32px;border-radius:8px;border:none;background:#6366f1;color:white;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">+</button></div>';i.querySelector('#cd').onclick=function(){c--;r()};i.querySelector('#ci').onclick=function(){c++;r()}}r();console.log('[Genesis Island] Counter hydrated (strategy: load)')})();
+""".trimIndent())
+
+        root.resolve("static/islands/theme-switcher.js").writeText("""
+(function(){var i=document.querySelector('[data-src="/islands/theme-switcher.js"]');if(!i)return;var s=localStorage.getItem('genesis-theme')||'dark';document.documentElement.setAttribute('data-theme',s);function r(){var d=document.documentElement.getAttribute('data-theme')==='dark';i.innerHTML='<button id="tt" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.5rem 1rem;background:'+(d?'#1e293b':'#f1f5f9')+';border:1px solid '+(d?'#334155':'#cbd5e1')+';border-radius:9999px;cursor:pointer;color:'+(d?'#e2e8f0':'#1e293b')+';font-size:0.85rem;font-weight:500;">'+(d?'\uD83C\uDF19 Dark':'\u2600\uFE0F Light')+'</button>';i.querySelector('#tt').onclick=function(){var n=d?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('genesis-theme',n);r()}}r();console.log('[Genesis Island] Theme Switcher hydrated (strategy: idle)')})();
+""".trimIndent())
+
+        root.resolve("static/islands/comment-form.js").writeText("""
+(function(){var i=document.querySelector('[data-src="/islands/comment-form.js"]');if(!i)return;var p=i.dataset.props?JSON.parse(i.dataset.props):{};var pid=p.postId||'x';var cs=JSON.parse(localStorage.getItem('genesis-comments-'+pid)||'[]');function e(t){var d=document.createElement('div');d.textContent=t;return d.innerHTML}function r(){i.innerHTML='<div style="padding:1.5rem;background:#1e293b;border-radius:12px;border:1px solid #334155;margin-top:1rem;"><h3 style="color:#f8fafc;font-size:1.1rem;margin-bottom:1rem;font-weight:600;">Comments ('+cs.length+')</h3><div id="cl">'+cs.map(function(c){return'<div style="padding:0.75rem;background:#0f172a;border-radius:8px;margin-bottom:0.5rem;color:#cbd5e1;font-size:0.9rem;">'+e(c)+'</div>'}).join('')+'</div><div style="display:flex;gap:0.5rem;"><input id="ci" type="text" placeholder="Write a comment..." style="flex:1;padding:0.6rem 1rem;background:#0f172a;border:1px solid #475569;border-radius:8px;color:#e2e8f0;font-size:0.9rem;outline:none;"/><button id="cs" style="padding:0.6rem 1.25rem;background:#6366f1;color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer;font-size:0.85rem;">Post</button></div></div>';i.querySelector('#cs').onclick=function(){var v=i.querySelector('#ci').value.trim();if(v){cs.push(v);localStorage.setItem('genesis-comments-'+pid,JSON.stringify(cs));r()}};i.querySelector('#ci').onkeydown=function(ev){if(ev.key==='Enter')i.querySelector('#cs').click()}}r();console.log('[Genesis Island] Comment Form hydrated (strategy: visible)')})();
+""".trimIndent())
+
+        root.resolve("static/islands/newsletter.js").writeText("""
+(function(){var i=document.querySelector('[data-src="/islands/newsletter.js"]');if(!i)return;var done=false;function r(){if(done){i.innerHTML='<div style="padding:1.25rem;background:#064e3b;border:1px solid #10b981;border-radius:12px;text-align:center;"><span style="font-size:1.5rem;">\u2713</span><p style="color:#a7f3d0;margin:0.5rem 0 0;font-weight:500;">Subscribed!</p></div>';return}i.innerHTML='<div style="padding:1.5rem;background:linear-gradient(135deg,#1e1b4b,#312e81);border:1px solid #4338ca;border-radius:12px;"><h4 style="color:#e0e7ff;margin-bottom:0.25rem;font-size:1rem;font-weight:600;">\uD83D\uDCEC Stay updated</h4><p style="color:#a5b4fc;font-size:0.85rem;margin-bottom:1rem;">Get notified about new posts.</p><div style="display:flex;gap:0.5rem;"><input id="ne" type="email" placeholder="you@example.com" style="flex:1;padding:0.6rem 1rem;background:#0f0a2e;border:1px solid #4338ca;border-radius:8px;color:#e2e8f0;font-size:0.9rem;outline:none;"/><button id="ns" style="padding:0.6rem 1.25rem;background:#6366f1;color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer;font-size:0.85rem;">Subscribe</button></div></div>';i.querySelector('#ns').onclick=function(){var v=i.querySelector('#ne').value.trim();if(v&&v.includes('@')){done=true;r()}};i.querySelector('#ne').onkeydown=function(ev){if(ev.key==='Enter')i.querySelector('#ns').click()}}r();console.log('[Genesis Island] Newsletter hydrated (strategy: client:only)')})();
 """.trimIndent())
     }
 
